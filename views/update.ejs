@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Post</title>
+    <link rel="stylesheet" href="/stylesheets/update.css">
+</head>
+
+<body>
+    <div class="update-card">
+        <h2>Update your post</h2>
+        <p class="subtext">Modify your content and save changes below.</p>
+
+        <form action="/update/<%= id %>" method="post">
+            <input type="text" name="content" placeholder="Edit your post...">
+            <input type="submit" value="Update Post">
+        </form>
+
+        <a href="/" class="back-link">← Go back</a>
+    </div>
+</body>
+</html>

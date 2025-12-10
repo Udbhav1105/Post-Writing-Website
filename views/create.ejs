@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="card">
+            <h2>Create User</h2>
+            <p class="subtext">Fill in the details below to create your account.</p>
+
+            <div class="main">
+                <form method="post" action="/create">
+                    <input class="fields" type="text" placeholder="Username" name="username">
+                    <input class="fields" type="text" placeholder="Full name" name="name">
+                    <input class="fields" type="number" placeholder="Age" name="age">
+                    <input class="fields" type="email" placeholder="Email" name="email">
+                    <input class="fields" type="password" placeholder="Password" name="password">
+                    <input class="fields" id="submit" type="submit" name="submit" value="Create user">
+                </form>
+            </div>
+        </div>
+    </div>
+    <a href="/login" class="logout-link">Login User</a>
+    <a href="/" class="home-btn">Homepage</a>
+</body>
+</html>

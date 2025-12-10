@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Posts</title>
+    <link rel="stylesheet" href="/stylesheets/profile.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="glass-card">
+            <div class="header-row">
+                <div>
+                    <h1>Hello <span class="greeting-accent"><%= user.name %></span></h1>
+                    <p class="subtext">Share what’s on your mind and keep track of all your posts here.</p>
+                </div>
+                <div class="user-chip">
+                    <span class="user-dot"></span>
+                    <span>@<%= user.username %></span>
+                </div>
+            </div>
+
+            <div class="layout-grid">
+                <!-- Create Post -->
+                <section class="compose-card">
+                    <div class="compose-title">
+                        <p>Create a new post</p>
+                       
+                    </div>
+                    <form action="/post" method="post">
+                        <textarea
+                            name="content"
+                            placeholder="What's in your mind?"
+                        ></textarea>
+                        <div class="compose-footer">
+                            <span class="hint">Tip: Be kind. The internet remembers. 🙂</span>
+                            <input type="submit" name="submit" value="Create Post">
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Posts List -->
+                <section class="posts-card">
+                    <div class="posts-header">
+                        <h2>Your Posts</h2>
+                        <span class="posts-count">
+                            <% if (user.posts && user.posts.length > 0) { %>
+                                <%= user.posts.length %> posted
+                            <% } else { %>
+                                No posts yet
+                            <% } %>
+                        </span>
+                    </div>
+
+                    <% if (user.posts && user.posts.length > 0) { %>
+                        <div class="posts-list">
+                            <% user.posts.forEach(function(post){ %>
+                                <article class="post-item">
+                                    <div class="post-header">
+                                        <h4 class="post-username">@<%= user.username %></h4>
+                                       
+                                    </div>
+
+                                    <p class="post-content"><%= post.content %></p>
+
+                                    <div class="post-actions">
+                                        <div class="likes">
+                                            <span class="likes-dot"></span>
+                                            <small><%= post.likes.length %> like<%= post.likes.length === 1 ? "" : "s" %></small>
+                                        </div>
+                                        <div class="actions-right">
+                                            <a class="btn-link btn-like" href="/like/<%= post._id %>">
+                                                <%= (post.likes.length === 0) ? "Like" : "Unlike" %>
+                                            </a>
+                                            <a class="btn-link btn-edit" href="/update/<%= post._id %>">
+                                                Edit
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            You haven’t posted anything yet. Start by sharing your thoughts in the box on the left!
+                        </div>
+                    <% } %>
+                </section>
+            </div>
+        </div>
+    </div>
+    <a href="/logout" class="logout-link">Logout</a>
+
+</body>
+</html>
