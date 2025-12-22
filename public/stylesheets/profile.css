@@ -396,16 +396,16 @@ input[type="submit"]:active {
 }
 .logout-link {
     position: fixed;
-    top: 20px;
-    right: 24px;
+    top: 10px;
+    right: 15px;
 
-    padding: 8px 16px;
+    padding: 4px 8px;
     border-radius: 999px;
 
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: #fff;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.6rem;
+    font-weight: 500;
     text-decoration: none;
     letter-spacing: 0.03em;
 
@@ -425,3 +425,35 @@ input[type="submit"]:active {
     transform: translateY(1px) scale(0.97);
     box-shadow: 0 5px 12px rgba(220, 38, 38, 0.4);
 }
+.update {
+    position: fixed;
+    top: 10px;
+    left: 15px;
+
+    padding: 4px 8px;
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #38bdf8, #3b82f6);
+    color: #f0f9ff;
+    font-size: 0.6rem;
+    font-weight: 400;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
+
+    transition: transform 0.1s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    z-index: 9999; /* Always on top */
+}
+
+.update:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(59, 130, 246, 0.55);
+    filter: brightness(1.05);
+}
+
+.update:active {
+    transform: translateY(1px) scale(0.97);
+    box-shadow: 0 5px 14px rgba(59, 130, 246, 0.45);
+}
+

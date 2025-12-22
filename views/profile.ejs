@@ -11,6 +11,7 @@
         <div class="glass-card">
             <div class="header-row">
                 <div>
+                    <small><img src="/images/<%= user.profile %>" alt="" style="height: 80px; width: 80px; border-radius: 15%;"></small>
                     <h1>Hello <span class="greeting-accent"><%= user.name %></span></h1>
                     <p class="subtext">Share what’s on your mind and keep track of all your posts here.</p>
                 </div>
@@ -90,6 +91,7 @@
         </div>
     </div>
     <a href="/logout" class="logout-link">Logout</a>
+    <a href="/change" class="update">Update your Profile</a>
 
 </body>
 </html>

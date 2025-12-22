@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const userModel=require('./models/user');
 const postModel=require('./models/post');
 const user = require('./models/user');
+const upload=require('./config/multerconfig');
 
 const app = express();
 app.use(cookieParser());
@@ -38,6 +39,17 @@ app.post('/create', (req, res) => {
         res.redirect('/login');
     })
 
+app.get("/change",(req,res)=>{
+    res.render("test");
+})
+app.post("/profile/upload", isLoggedIn ,upload.single("file"),async (req,res)=>{
+    let user=await userModel.findOne({email:req.user.email});
+    user.profile=req.file.filename;
+    await user.save();
+    console.log(req.file);
+    res.redirect("/profile");
+})
+
 app.get('/login', (req, res) => {
   res.render('login')
 });
@@ -53,7 +65,7 @@ app.post("/login",async (req,res)=>{
                 res.clearCookie("token");
                 let token=jwt.sign({email,userid:user._id},'key');
                 res.cookie("token",token);   
-                res.redirect('/profile');
+                res.redirect('/profile')
             }
         })
     }
@@ -118,4 +130,6 @@ function isLoggedIn(req,res,next)
     }
 }
 
-app.listen(3000) 
+app.listen(3000,(req,res)=>{
+    console.log("running")
+}) 
