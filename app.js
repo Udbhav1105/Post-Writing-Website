@@ -1,11 +1,15 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt=require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-const userModel=require('./models/user');
-const postModel=require('./models/post');
-const user = require('./models/user');
-const upload=require('./config/multerconfig');
+import express from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import userModel from './models/user.js';
+import post from './models/post.js';
+// import User from './models/user.js';
+import multer from 'multer';
+import {upload} from './config/multerconfig.js';
+import dotenv from 'dotenv';
+dotenv.config();
+const port=(process.env.PORT || 5000);
 
 const app = express();
 app.use(cookieParser());
@@ -25,7 +29,7 @@ app.post('/create', (req, res) => {
     const { username, name, age, email, password } = req.body;
      bcrypt.genSalt(10,async (err,salt)=>{
       let hash= await bcrypt.hash(password,salt);
-            let user=await userModel.create({
+            let user=await user.create({
                 username,
                 name,
                 age,
@@ -43,7 +47,7 @@ app.get("/change",(req,res)=>{
     res.render("test");
 })
 app.post("/profile/upload", isLoggedIn ,upload.single("file"),async (req,res)=>{
-    let user=await userModel.findOne({email:req.user.email});
+    let user=await user.findOne({email:req.user.email});
     user.profile=req.file.filename;
     await user.save();
     console.log(req.file);
@@ -72,7 +76,7 @@ app.post("/login",async (req,res)=>{
 })
 
 app.get('/like/:id', isLoggedIn ,async (req,res)=>{
-    let post=await postModel.findOne({_id:req.params.id});
+    let post=await post.findOne({_id:req.params.id});
     if(post.likes.indexOf(req.user.userid) === -1){
          post.likes.push(req.user.userid);
     }
@@ -88,7 +92,7 @@ app.get('/update/:id',(req,res)=>{
 })
 
 app.post('/update/:id',async (req,res)=>{
-    let post=await postModel.findOne({_id:req.params.id});
+    let post=await post.findOne({_id:req.params.id});
     post.content=req.body.content;
     await post.save();
     res.redirect('/profile');
@@ -103,7 +107,7 @@ app.get('/profile', isLoggedIn, async (req,res)=>{
 app.post('/post', isLoggedIn , async (req,res)=>{
     let user=await userModel.findOne({email: req.user.email});
     let {content}=req.body;
-   let post=await postModel.create({
+   let post=await post.create({
         userid:user._id,
         content
     })
@@ -130,6 +134,6 @@ function isLoggedIn(req,res,next)
     }
 }
 
-app.listen(3000,(req,res)=>{
+app.listen(port,(req,res)=>{
     console.log("running")
 }) 

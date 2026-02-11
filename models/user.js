@@ -1,6 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
-mongoose.connect('mongodb://127.0.0.1:27017/mini1');
+mongoose.connect(process.env.MONGO_URI);
 
 const userSchema = new mongoose.Schema({
     username: String,
@@ -20,4 +22,5 @@ const userSchema = new mongoose.Schema({
     ]
 });
 
-module.exports=mongoose.model('User',userSchema);
+const userModel = mongoose.model('User', userSchema); 
+export default userModel;
