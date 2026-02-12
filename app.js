@@ -25,23 +25,44 @@ app.get('/', (req, res) => {
 app.get('/create', (req, res) => {
   res.render('create')
 });
-app.post('/create', (req, res) => {
-    const { username, name, age, email, password } = req.body;
-     bcrypt.genSalt(10,async (err,salt)=>{
-      let hash= await bcrypt.hash(password,salt);
-            let user=await userModel.create({
-                username,
-                name,
-                age,
-                email,
-                password:hash
-            })
-            let token=jwt.sign({email,userid:user._id},'key');
-            res.cookie("token", token)
-              
-        })
-        res.redirect('/login');
-    })
+app.post('/create', async (req, res) => {
+    try {
+        const { username, name, age, email, password } = req.body;
+
+        const existingUser = await userModel.findOne({ email });
+
+        if (existingUser) {
+            return res.redirect('/login');  
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
+        const user = await userModel.create({
+            username,
+            name,
+            age,
+            email,
+            password: hash
+        });
+
+        const token = jwt.sign(
+            { email: user.email, userid: user._id },
+            'key'
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true
+        });
+
+        return res.redirect('/profile');  
+    }
+    catch (err) {
+        console.log(err);
+        return res.send("Error occurred");
+    }
+});
+
 
 app.get("/change",(req,res)=>{
     res.render("test");
@@ -61,20 +82,36 @@ app.get('/login', (req, res) => {
 app.post("/login",async (req,res)=>{
     const {email,password}=req.body;
     let user=await userModel.findOne({email});
-    if(!user) res.redirect('/create');
+    if(!user){return res.redirect('/create');}
     else{
-        bcrypt.compare(password,user.password, async (err,result)=>{
-            if(!result) res.send('something went wrong');
-            else{
-                res.clearCookie("token");
-                let token=jwt.sign({email,userid:user._id},'key');
-                res.cookie("token",token);   
-                res.redirect('/profile')
-            }
-        })
+    bcrypt.compare(password, user.password, (err, result) => {
+    if (err) {
+        return res.send("Error comparing passwords");
+    }
+
+    if (!result) {
+        return res.send("Invalid credentials");
+    }
+
+    res.clearCookie("token");
+
+    const token = jwt.sign(
+        { email: user.email, userid: user._id },
+        "key",
+        { expiresIn: "1d" }
+    );
+
+   res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax"
+});
+
+    return res.redirect("/profile");
+});
+
     }
 })
-
 app.get('/like/:id', isLoggedIn ,async (req,res)=>{
     let post=await postModel.findOne({_id:req.params.id});
     if(post.likes.indexOf(req.user.userid) === -1){
@@ -84,18 +121,20 @@ app.get('/like/:id', isLoggedIn ,async (req,res)=>{
         post.likes.splice(post.likes.indexOf(req.user.userid) ,1);
     }
     await post.save();
-    res.redirect('/profile');
+    return res.redirect('/profile');
 })
 
-app.get('/update/:id',(req,res)=>{
-    res.render("update",{id:req.params.id});
+app.get('/update/:id',async (req,res)=>{
+    let post=await postModel.findById(req.params.id)
+    
+    res.render("update",{id:req.params.id, content:post.content});
 })
 
 app.post('/update/:id',async (req,res)=>{
     let post=await postModel.findOne({_id:req.params.id});
     post.content=req.body.content;
     await post.save();
-    res.redirect('/profile');
+   return res.redirect('/profile');
     })
 
 app.get('/profile', isLoggedIn, async (req,res)=>{
@@ -114,18 +153,24 @@ app.post('/post', isLoggedIn , async (req,res)=>{
     user.posts.push(post._id);
     await user.save();
     // console.log(postModel)
-    res.redirect('/profile');
+    return res.redirect('/profile');
 })
 
 app.get("/logout",(req,res)=>{
-    res.cookie("token","");
-    res.redirect('/login');
+    res.cookie("token","", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax"
+});
+    return res.redirect('/login');
 });
 
 function isLoggedIn(req,res,next)
 {
-    if
-    (req.cookies.token === "") res.redirect("/login");
+    if (!req.cookies.token) {
+    return res.redirect("/login");
+    }
+
     else{
         let data=jwt.verify(req.cookies.token, 'key');
         req.user=data;

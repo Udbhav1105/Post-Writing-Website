@@ -13,7 +13,7 @@
         <p class="subtext">Modify your content and save changes below.</p>
 
         <form action="/update/<%= id %>" method="post">
-            <input type="text" name="content" placeholder="Edit your post...">
+            <input type="text" name="content" placeholder="Edit your post..." value="<%= content %>">
             <input type="submit" value="Update Post">
         </form>
 
