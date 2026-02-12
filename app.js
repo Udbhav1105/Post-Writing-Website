@@ -29,7 +29,7 @@ app.post('/create', (req, res) => {
     const { username, name, age, email, password } = req.body;
      bcrypt.genSalt(10,async (err,salt)=>{
       let hash= await bcrypt.hash(password,salt);
-            let user=await user.create({
+            let user=await userModel.create({
                 username,
                 name,
                 age,
@@ -47,7 +47,7 @@ app.get("/change",(req,res)=>{
     res.render("test");
 })
 app.post("/profile/upload", isLoggedIn ,upload.single("file"),async (req,res)=>{
-    let user=await user.findOne({email:req.user.email});
+    let user=await userModel.findOne({email:req.user.email});
     user.profile=req.file.filename;
     await user.save();
     console.log(req.file);
