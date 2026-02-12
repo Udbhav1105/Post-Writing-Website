@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import userModel from './models/user.js';
-import post from './models/post.js';
+import postModel from './models/post.js';
 // import User from './models/user.js';
 import multer from 'multer';
 import {upload} from './config/multerconfig.js';
@@ -76,7 +76,7 @@ app.post("/login",async (req,res)=>{
 })
 
 app.get('/like/:id', isLoggedIn ,async (req,res)=>{
-    let post=await post.findOne({_id:req.params.id});
+    let post=await postModel.findOne({_id:req.params.id});
     if(post.likes.indexOf(req.user.userid) === -1){
          post.likes.push(req.user.userid);
     }
@@ -92,7 +92,7 @@ app.get('/update/:id',(req,res)=>{
 })
 
 app.post('/update/:id',async (req,res)=>{
-    let post=await post.findOne({_id:req.params.id});
+    let post=await postModel.findOne({_id:req.params.id});
     post.content=req.body.content;
     await post.save();
     res.redirect('/profile');
@@ -100,20 +100,20 @@ app.post('/update/:id',async (req,res)=>{
 
 app.get('/profile', isLoggedIn, async (req,res)=>{
     let user=await userModel.findOne({email:req.user.email}).populate('posts');
-    // console.log(user.posts)
-    res.render('profile',{user,post:user.posts});
+    // console.log(user.postModels)
+    res.render('profile',{user,posts:user.posts});
 })
 
 app.post('/post', isLoggedIn , async (req,res)=>{
     let user=await userModel.findOne({email: req.user.email});
     let {content}=req.body;
-   let post=await post.create({
+   let post=await postModel.create({
         userid:user._id,
         content
     })
     user.posts.push(post._id);
     await user.save();
-    // console.log(post)
+    // console.log(postModel)
     res.redirect('/profile');
 })
 
