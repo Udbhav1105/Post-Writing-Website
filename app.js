@@ -63,7 +63,6 @@ app.post('/create', async (req, res) => {
     }
 });
 
-
 app.get("/change",(req,res)=>{
     res.render("test");
 })
@@ -180,5 +179,5 @@ function isLoggedIn(req,res,next)
 }
 
 app.listen(port,(req,res)=>{
-    console.log("running")
+    console.log(`running on ${port}`)
 }) 
