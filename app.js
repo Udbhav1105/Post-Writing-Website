@@ -8,10 +8,25 @@ import postModel from './models/post.js';
 import multer from 'multer';
 import {upload} from './config/multerconfig.js';
 import dotenv from 'dotenv';
+import session from "express-session";
+import flash from "connect-flash";
 dotenv.config();
 const port=(process.env.PORT || 5000);
 
 const app = express();
+
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.error = req.flash("error");
+    next();
+});
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -48,8 +63,7 @@ app.post('/create', async (req, res) => {
 
         const token = jwt.sign(
             { email: user.email, userid: user._id },
-            'key'
-        );
+            process.env.SECRET_KEY        );
 
         res.cookie("token", token, {
             httpOnly: true
@@ -74,7 +88,7 @@ app.post("/profile/upload", isLoggedIn ,upload.single("file"),async (req,res)=>{
     res.redirect("/profile");
 })
 
-app.get('/login', (req, res) => {
+app.get('/login',autologin, (req, res) => {
   res.render('login')
 });
 
@@ -89,14 +103,15 @@ app.post("/login",async (req,res)=>{
     }
 
     if (!result) {
-        return res.send("Invalid credentials");
+        req.flash("error","incorrect password")
+       return res.redirect('/login')
     }
 
     res.clearCookie("token");
 
     const token = jwt.sign(
         { email: user.email, userid: user._id },
-        "key",
+        process.env.SECRET_KEY,
         { expiresIn: "1d" }
     );
 
@@ -161,20 +176,32 @@ app.get("/logout",(req,res)=>{
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax"
 });
-    return res.redirect('/login');
+    return res.redirect('/');
 });
 
-function isLoggedIn(req,res,next)
-{
-    if (!req.cookies.token) {
-    return res.redirect("/login");
+function isLoggedIn(req, res, next) {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.redirect("/login");
     }
 
+    try {
+        const data = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = data;
+        return next();
+    } catch (err) {
+        res.clearCookie("token");
+        return res.redirect("/login");
+    }
+}
+
+function autologin(req,res,next){
+    if(!req.cookies.token){
+        next()
+    }
     else{
-        let data=jwt.verify(req.cookies.token, 'key');
-        req.user=data;
-        // console.log(req.user);  
-        next();
+        return res.redirect('/profile')
     }
 }
 

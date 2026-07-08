@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <style>
         :root {
@@ -33,21 +34,33 @@
     overflow-x: hidden;
 }
 
-        /* Center Card */
-       .container {
-    width: 100%;
-    min-height: 100vh;
+ .page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
 
-    background:
-        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.18), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.18), transparent 60%),
-        rgba(15, 23, 42, 0.95);
+.container{
+    width:100%;
+    max-width:520px;
+    padding:50px 40px;
+    text-align:center;
 
-    padding: 32px;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.88);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:24px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    animation:fadeUp .7s ease;
 }
 
         @keyframes fadeUp {
@@ -101,15 +114,16 @@
     </style>
 </head>
 
-<body>
-
-    <div class="container">
-        <h2>Welcome to Post Writing Website</h2>
-        <p class="subtext">Create an account or log in to start posting your thoughts ✨</p>
-
-        <a href="/create" class="btn">Register User</a>
-        <a href="/login" class="btn">Login User</a>
+<body class="">
+    <div class="page">
+        <div class="container  flex justify-center items-center border-2  flex-col gap-5">
+            <h2>Welcome to Post Writing Website</h2>
+            <p class="subtext">Create an account or log in to start posting your thoughts ✨</p>
+            
+            <a href="/create" class="btn">Register User</a>
+            <a href="/login" class="btn">Login User</a>
+        </div>
     </div>
-
+        
 </body>
 </html>

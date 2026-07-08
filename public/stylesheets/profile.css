@@ -142,6 +142,7 @@ textarea{
     padding:18px;
     resize:none;
     outline:none;
+    font-size:x-large;
 }
 
 .compose-footer{

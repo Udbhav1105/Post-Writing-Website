@@ -13,6 +13,11 @@
 
             <div class="main">
                 <form method="post" action="/login">
+                    <% if (error && error.length > 0) { %>
+<script>
+    alert("<%= error[0] %>");
+</script>
+<% } %>
                     <input class="fields"   type="email" placeholder="email" name="email">
                     <input  class="fields"  type="password" placeholder="password" name="password">
                     <input  class="fields" id="submit" type="submit" name="login" value="Login user">
